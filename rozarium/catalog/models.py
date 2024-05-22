@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.text import slugify
+from django.urls import reverse
 
 # Create your models here.
 
@@ -6,6 +8,11 @@ class News(models.Model):
     title = models.CharField(max_length=200, help_text='Введите заголовок новости')
     text = models.TextField(help_text='Введите текст новости')
     pub_date = models.DateTimeField('date published', help_text='Выберите дату и время публикации новости')
+
+
+    class Meta:
+        verbose_name = 'Новость'
+        verbose_name_plural = 'Новости'
 
     def __str__(self):
         return self.title
@@ -16,12 +23,23 @@ class Category(models.Model):
     name = models.CharField(max_length=200, help_text="Напишите категория")
     descriptionCategory = models.TextField(max_length=2000,
                                            help_text="Напишите описание категории")
+    slug = models.SlugField(max_length=200, db_index=True, unique=True)
+    #slug = models.SlugField(max_length=70, unique=True)
+    
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
     
     def __str__(self):
         
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse('catalog:product_list_by_category',
+                        args=[self.slug])
 
 class Plant(models.Model):
+    '''
     plant_id = models.AutoField(primary_key=True, help_text='Уникальный идентификатор растения')
     name = models.CharField(max_length=100, help_text='Название растения')
     description = models.TextField(help_text='Описание растения')
@@ -29,16 +47,42 @@ class Plant(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, help_text='Цена растения')
     availability = models.BooleanField(default=True, help_text='Наличие на складе')
     image = models.ImageField(upload_to='images/', help_text='Изображение растения')
+    '''
+
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    name = models.CharField(max_length=200, db_index=True)
+    slug = models.SlugField(max_length=200, db_index=True, unique=True)
+    image = models.ImageField(upload_to='products/%Y/%m/%d', blank=True)
+    description = models.TextField(blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    available = models.BooleanField(default=True)
+    created = models.DateTimeField(auto_now=True)
+    
+
+    class Meta:
+        ordering = ('name',)
+        index_together = (('id', 'slug'),)
+        verbose_name = 'Растение'
+        verbose_name_plural = 'Растения'
 
     def __str__(self):
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse('catalog:product_detail',
+                        args=[self.id, self.slug])
 
 
+'''
 class Sale(models.Model):
     sale_id = models.AutoField(primary_key=True, help_text='Уникальный идентификатор распродажи')
     name = models.CharField(max_length=100, help_text='Название распродажи')
     date = models.DateField(help_text='Дата проведения распродажи')
     discount_percentage = models.IntegerField(help_text='Процент скидки')
+
+    class Meta:
+        verbose_name = 'Распродажа'
+        verbose_name_plural = 'Распродажа'
 
     def __str__(self):
         return self.name
@@ -171,3 +215,4 @@ class Delivery(models.Model):
         if self.delivery_method == 'self_pickup':
             self.delivery_address = None
         super(Delivery, self).save(*args, **kwargs)
+'''

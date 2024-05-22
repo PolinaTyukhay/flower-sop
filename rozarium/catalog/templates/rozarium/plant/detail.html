@@ -1,0 +1,14 @@
+{% extends "rozarium/base.html" %}
+{% load static %}
+{% block title %}
+    {% if category %}{{ category.title }}{% else %}Products{% endif %}
+{% endblock %}
+{% block content %}
+    <div class="product-detail">
+        <img src="{% if plant.image %}{{ plant.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
+        <h1>{{ product.name }}</h1>
+        <h2><a href="{{ plant.category.get_absolute_url }}">{{ plant.category }}</a></h2>
+        <p class="price">{{ plant.price }}р</p>
+        {{ plant.description|linebreaks }}
+    </div>
+{% endblock %}

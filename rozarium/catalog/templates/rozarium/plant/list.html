@@ -1,0 +1,32 @@
+{% extends "rozarium/base.html" %}
+{% load static %}
+{% block title %}
+{% if category %}{{ category.name }}{% else %}Products{% endif %}
+{% endblock %}
+{% block content %}
+<div id="sidebar">
+    <h3>Categories</h3>
+    <ul>
+        <li {% if not category %}class="selected" {% endif %}>
+            <a href="{% url 'catalog:product_list' %}">All</a>
+        </li>
+        {% for c in categories %}
+             <li {% if category.slug|slugify == c.slug|slugify %} class="selected" {% endif %}>
+                <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+             </li>
+        {% endfor %}
+    </ul>
+</div>
+<div id="main" class="product-list">
+    <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
+    {% for plant in plants %}
+    <div class="item">
+        <a href="{{ plant.get_absolute_url }}">
+            <img src="{% if plant.image %}{{ plant.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
+        </a>
+        <a href="{{ plant.get_absolute_url }}">{{ plant.name }}</a><br>
+        {{ plant.price }}р
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

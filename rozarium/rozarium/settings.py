@@ -11,9 +11,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+SETTINGS_PATH = os.path.normpath(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -56,7 +59,9 @@ ROOT_URLCONF = 'rozarium.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'), 
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,3 +128,41 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+# Установка хранилища сессий (по умолчанию используется база данных)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+# Время жизни сессии в секундах (например, 1 неделя)
+SESSION_COOKIE_AGE = 604800
+
+# Установка безопасности для куки сессии
+SESSION_COOKIE_SECURE = True
+
+# Шифрование данных сессии
+SESSION_COOKIE_HTTPONLY = True
+
+# Закрытие сессии при закрытии браузера
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+#Это ключ, который мы собираемся использовать для хранения корзины в сессии пользователя.
+CART_SESSION_ID = 'cart'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
